@@ -16,18 +16,45 @@ An standard MCP Server that connects your AI agent (like Claude) to your Odoo ER
 - Node.js (v18 or higher)
 - An Odoo instance (v14+ recommended)
 
-### Setup
+### Option 1: Direct Use (via npx)
+*Coming soon to npm! Once published, you can use:*
+```json
+{
+  "mcpServers": {
+    "odoo": {
+      "command": "npx",
+      "args": ["-y", "@zorgui/odoo-mcp"],
+      "env": { ... }
+    }
+  }
+}
+```
 
-1.  **Clone or Download** this repository.
-2.  **Install dependencies**:
-    ```bash
-    npm install
-    ```
-3.  **Build the project**:
-    ```bash
-    npm run build
-    ```
-    *(Note: You may need to add a build script to package.json first: `"build": "tsc"`)
+### Option 2: Install from Git (Recommended)
+Since the package is hosted on GitHub, you can install it globally directly:
+
+```bash
+npm install -g git+https://github.com/zorguiala/Odoo-MCP.git
+```
+
+Then configure Claude Desktop:
+
+```json
+{
+  "mcpServers": {
+    "odoo": {
+      "command": "odoo-mcp", 
+      "env": { ... }
+    }
+  }
+}
+```
+
+### Option 3: Local Development
+1.  **Clone** this repository.
+2.  **Install & Build**: `npm install && npm run build`
+3.  **Use**: Point Claude to the local `dist/index.js`.
+
 
 ### Configuration
 

@@ -1,8 +1,14 @@
 {
-  "name": "odoo-mcp",
+  "name": "@zorgui/odoo-mcp",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "odoo-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"

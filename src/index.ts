@@ -9,8 +9,11 @@ import { config } from "dotenv";
 import { OdooClient } from "./services/odoo.client.js";
 import { allTools, handleCallTool } from "./tools/index.js";
 
-// Load environment variables
-config();
+// Load environment variables only if not provided (prevents STDOUT pollution in MCP mode)
+if (!process.env.ODOO_URL) {
+    config();
+}
+
 
 const server = new Server(
     {

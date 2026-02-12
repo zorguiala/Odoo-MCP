@@ -1,5 +1,5 @@
 import xmlrpc from "xmlrpc";
-import { Config } from "../config.js";
+import { getConfig } from "../config.js";
 
 export class OdooClient {
     private url: string;
@@ -11,10 +11,12 @@ export class OdooClient {
     private objectClient: xmlrpc.Client;
 
     constructor() {
-        this.url = Config.ODOO_URL;
-        this.db = Config.ODOO_DB;
-        this.username = Config.ODOO_USERNAME;
-        this.password = Config.ODOO_PASSWORD;
+        const config = getConfig();
+        this.url = config.ODOO_URL;
+        this.db = config.ODOO_DB;
+        this.username = config.ODOO_USERNAME;
+        this.password = config.ODOO_PASSWORD;
+
 
         const urlParts = new URL(this.url);
         const clientOptions = {

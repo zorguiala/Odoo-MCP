@@ -25,6 +25,19 @@ const InspectModelSchema = z.object({
     model: z.string().describe("The Odoo model to inspect"),
 });
 
+const DeleteSchema = z.object({
+    model: z.string().describe("The Odoo model to delete from"),
+    ids: z.array(z.number()).describe("IDs of records to delete"),
+});
+
+const CallMethodSchema = z.object({
+    model: z.string().describe("The Odoo model"),
+    method: z.string().describe("The method name to call (e.g., 'action_post', 'button_confirm')"),
+    ids: z.array(z.number()).describe("IDs of records to call the method on"),
+    args: z.array(z.any()).optional().default([]).describe("Positional arguments for the method"),
+    kwargs: z.record(z.any()).optional().default({}).describe("Keyword arguments for the method"),
+});
+
 export const commonTools = [
     {
         name: "odoo_search_read",
@@ -45,6 +58,16 @@ export const commonTools = [
         name: "odoo_inspect_model",
         description: "Inspect a model's fields and metadata",
         inputSchema: zodToJsonSchema(InspectModelSchema) as any,
+    },
+    {
+        name: "odoo_delete",
+        description: "Delete records from an Odoo model",
+        inputSchema: zodToJsonSchema(DeleteSchema) as any,
+    },
+    {
+        name: "odoo_call_method",
+        description: "Call a method on Odoo records (e.g., action_post, button_confirm)",
+        inputSchema: zodToJsonSchema(CallMethodSchema) as any,
     },
 ];
 
@@ -103,6 +126,34 @@ export async function handleCommonTools(name: string, args: any, odoo: OdooClien
                         await odoo.execute_kw(model, "fields_get", [], {
                             attributes: ["string", "help", "type", "relation"],
                         }),
+                        null,
+                        2
+                    ),
+                },
+            ],
+        };
+    }
+
+    if (name === "odoo_delete") {
+        const { model, ids } = DeleteSchema.parse(args);
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(await odoo.execute_kw(model, "unlink", [ids]), null, 2),
+                },
+            ],
+        };
+    }
+
+    if (name === "odoo_call_method") {
+        const { model, method, ids, args: methodArgs, kwargs } = CallMethodSchema.parse(args);
+        return {
+            content: [
+                {
+                    type: "text",
+                    text: JSON.stringify(
+                        await odoo.execute_kw(model, method, [ids, ...methodArgs], kwargs),
                         null,
                         2
                     ),
